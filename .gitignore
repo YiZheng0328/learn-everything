@@ -1,0 +1,3 @@
+# Demo video (~75MB) — Git LFS 未安装，排除视频文件
+# 请在 GitHub Releases 页面手动上传 demo/learn-everything-demo.mp4 作为 Release Asset
+demo/*.mp4

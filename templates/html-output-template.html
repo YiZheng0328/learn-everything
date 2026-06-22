@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{学科名} — 学习笔记</title>
+  <!-- MathJax 3 -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+  <style>
+    /* ═══════════════ Anthropic Design System — CSS Variables ═══════════════ */
+    :root {
+      /* ── Surface & Background ── */
+      --bg: #f5f4ed;              /* Parchment — warm cream, the emotional foundation */
+      --card-bg: #faf9f5;         /* Ivory — card surfaces, elevated containers */
+      --nav-bg: #faf9f5;          /* Ivory — sidebar background */
+
+      /* ── Primary & Accent ── */
+      --primary: #c96442;         /* Terracotta Brand — earthy burnt orange-brown */
+      --accent: #d97757;          /* Coral Accent — secondary emphasis, links on dark */
+
+      /* ── Text ── */
+      --heading: #141413;         /* Anthropic Near Black — warm olive-tinted dark */
+      --text: #141413;            /* Same as heading — primary body text */
+      --muted: #87867f;           /* Stone Gray — tertiary text, footnotes */
+
+      /* ── Borders & Dividers ── */
+      --border: #f0eee6;          /* Border Cream — gentlest containment */
+      --border-warm: #e8e6dc;     /* Border Warm / Warm Sand — prominent dividers */
+
+      /* ── Special Box Backgrounds ── */
+      --summary-bg: #faf6f2;      /* Pale warm terracotta tint */
+      --definition-bg: #faf9f5;   /* Ivory — definition cards use card surface */
+      --example-bg: #f4f7ed;      /* Pale warm sage */
+      --pitfall-bg: #faf5f4;      /* Pale warm coral tint */
+
+      /* ── Status Colors ── */
+      --success-bg: #eaf0e2;      /* Pale warm sage for mastered states */
+      --success-text: #4a6338;    /* Warm dark olive for mastered text */
+      --review-bg: #faf5e8;       /* Pale warm amber for review states */
+      --review-text: #8a6d20;     /* Warm dark amber for review text */
+      --star-color: #c8a030;      /* Warm amber gold for exam weight stars */
+
+      /* ── Depth & Elevation ── */
+      --whisper-shadow: rgba(0,0,0,0.05) 0px 4px 24px;
+
+      /* ── Border Radius Scale ── */
+      --radius-std: 8px;          /* Comfortably rounded — standard cards, buttons */
+      --radius-lg: 12px;          /* Generously rounded — primary buttons, inputs */
+      --radius-xl: 16px;          /* Very rounded — featured containers */
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ═══════════════ Base Typography ═══════════════ */
+    body {
+      font-family: system-ui, -apple-system, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.60;
+      display: flex;
+    }
+
+    /* ═══════════════ Sidebar Navigation ═══════════════ */
+    nav#toc {
+      position: fixed;
+      top: 0; left: 0;
+      width: 260px;
+      height: 100vh;
+      background: var(--nav-bg);
+      border-right: 1px solid var(--border-warm);
+      overflow-y: auto;
+      padding: 24px 20px;
+      font-size: 14px;
+      z-index: 10;
+    }
+
+    nav#toc h3 {
+      font-family: Georgia, "Songti SC", "Noto Serif SC", serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--heading);
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--primary);
+    }
+
+    nav#toc ol {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    nav#toc li {
+      margin-bottom: 4px;
+    }
+
+    nav#toc a {
+      color: var(--muted);
+      text-decoration: none;
+      display: block;
+      padding: 5px 10px;
+      border-radius: var(--radius-std);
+      transition: background 0.15s, color 0.15s;
+    }
+
+    nav#toc a:hover {
+      background: var(--border);
+      color: var(--heading);
+    }
+
+    nav#toc a.active {
+      background: var(--primary);
+      color: #faf9f5;
+    }
+
+    nav#toc .exam-weight {
+      color: var(--star-color);
+      font-size: 11px;
+      margin-left: 4px;
+    }
+
+    nav#toc .nav-section {
+      margin-bottom: 20px;
+    }
+
+    /* ═══════════════ Main Content ═══════════════ */
+    main {
+      margin-left: 260px;
+      padding: 32px 48px;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    /* ── Headings (Anthropic Serif → Georgia fallback, weight 500 ceiling) ── */
+    main h1 {
+      font-family: Georgia, "Songti SC", "Noto Serif SC", serif;
+      font-size: 2.25rem;
+      font-weight: 500;
+      color: var(--heading);
+      border-bottom: 2px solid var(--primary);
+      padding-bottom: 14px;
+      margin-bottom: 12px;
+      line-height: 1.20;
+    }
+
+    main h2 {
+      font-family: Georgia, "Songti SC", "Noto Serif SC", serif;
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: var(--heading);
+      margin-top: 44px;
+      margin-bottom: 18px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border-warm);
+      line-height: 1.20;
+    }
+
+    main h3 {
+      font-family: Georgia, "Songti SC", "Noto Serif SC", serif;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--heading);
+      margin-top: 28px;
+      margin-bottom: 10px;
+      line-height: 1.30;
+    }
+
+    main p {
+      margin-bottom: 14px;
+      line-height: 1.60;
+    }
+
+    /* ── Content Links ── */
+    main a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    main a:hover {
+      color: var(--accent);
+      text-decoration: underline;
+    }
+
+    /* ═══════════════ Special Content Boxes ═══════════════ */
+
+    /* 一句话解释 — pull-quote editorial feel */
+    .summary {
+      background: var(--summary-bg);
+      border-left: 4px solid var(--primary);
+      padding: 14px 18px;
+      border-radius: 0 var(--radius-std) var(--radius-std) 0;
+      font-family: Georgia, "Songti SC", "Noto Serif SC", serif;
+      font-style: italic;
+      font-size: 1.05em;
+      line-height: 1.60;
+      color: var(--heading);
+      margin: 12px 0 20px;
+    }
+
+    /* 形式化定义 — elevated card */
+    .definition {
+      background: var(--card-bg);
+      border: 1px solid var(--border-warm);
+      padding: 18px 22px;
+      border-radius: var(--radius-std);
+      margin: 12px 0 20px;
+      box-shadow: var(--whisper-shadow);
+    }
+
+    /* 最小例子 — warm sage left accent */
+    .example {
+      background: var(--example-bg);
+      border-left: 4px solid #7d9b6a;
+      padding: 14px 18px;
+      border-radius: 0 var(--radius-std) var(--radius-std) 0;
+      margin: 12px 0 20px;
+    }
+
+    /* 易错点 — coral warning */
+    .pitfall {
+      background: var(--pitfall-bg);
+      border-left: 4px solid var(--accent);
+      padding: 14px 18px;
+      border-radius: 0 var(--radius-std) var(--radius-std) 0;
+      margin: 12px 0 20px;
+    }
+
+    /* ═══════════════ Tables ═══════════════ */
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 14px 0 22px;
+      border-radius: var(--radius-std);
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      text-align: left;
+    }
+
+    th {
+      background: var(--border);
+      font-weight: 500;
+      font-family: Georgia, "Songti SC", "Noto Serif SC", serif;
+    }
+
+    /* ═══════════════ Code & Pre ═══════════════ */
+    pre {
+      background: var(--card-bg);
+      border: 1px solid var(--border-warm);
+      border-radius: var(--radius-std);
+      padding: 14px;
+      font-family: "SF Mono", "Cascadia Code", "Consolas", "Source Code Pro", "Fira Code", monospace;
+      font-size: 0.82rem;
+      line-height: 1.60;
+    }
+
+    /* ═══════════════ Metadata Bar ═══════════════ */
+    .metadata {
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 28px;
+    }
+
+    .metadata span {
+      margin-right: 16px;
+    }
+
+    /* ═══════════════ Chapter Separator ═══════════════ */
+    .chapter-sep {
+      border: none;
+      border-top: 2px dashed var(--border-warm);
+      margin: 52px 0 36px;
+    }
+
+    /* ═══════════════ Mobile Responsive ═══════════════ */
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      nav#toc {
+        position: relative;
+        width: 100%;
+        height: auto;
+        max-height: 40vh;
+        border-right: none;
+        border-bottom: 1px solid var(--border-warm);
+      }
+      main { margin-left: 0; padding: 20px 16px; }
+    }
+
+    /* ═══════════════ Print ═══════════════ */
+    @media print {
+      nav#toc { display: none; }
+      main { margin-left: 0; }
+      .concept-note { page-break-inside: avoid; }
+    }
+
+    /* ═══════════════ Concept Status Indicators ═══════════════ */
+    .concept-status {
+      font-size: 14px;
+      margin-left: 8px;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    .concept-status.mastered { color: var(--success-text); }
+    .concept-status.pending { color: var(--muted); }
+
+    /* ═══════════════ Pending State (concept not yet coached) ═══════════════ */
+    .concept-note.pending {
+      opacity: 0.65;
+      border: 2px dashed var(--border-warm);
+      background: var(--bg);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      text-align: center;
+    }
+    .pending-msg {
+      color: var(--muted);
+      font-style: italic;
+      font-family: Georgia, "Songti SC", "Noto Serif SC", serif;
+    }
+
+    /* ═══════════════ Derivation Log (collapsible coaching record) ═══════════════ */
+    details.derivation-log {
+      margin-top: 28px;
+      padding: 18px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-warm);
+      border-radius: var(--radius-std);
+    }
+    details.derivation-log summary {
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--muted);
+      user-select: none;
+      font-family: Georgia, "Songti SC", "Noto Serif SC", serif;
+    }
+    details.derivation-log summary:hover {
+      color: var(--heading);
+    }
+    .derivation-step {
+      margin-top: 14px;
+      padding: 12px 16px;
+      background: var(--bg);
+      border-radius: 6px;
+      border-left: 3px solid var(--border-warm);
+    }
+    .derivation-step strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    /* ═══════════════ Status Badges ═══════════════ */
+    .status-fixed {
+      display: inline-block;
+      background: var(--success-bg);
+      color: var(--success-text);
+      padding: 2px 10px;
+      border-radius: var(--radius-std);
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .status-review {
+      display: inline-block;
+      background: var(--review-bg);
+      color: var(--review-text);
+      padding: 2px 10px;
+      border-radius: var(--radius-std);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* ═══════════════ Progress Bar ═══════════════ */
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: var(--border);
+      border-radius: 4px;
+      margin: 8px 0 16px;
+      overflow: hidden;
+    }
+    .progress-bar .fill {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    /* ═══════════════ Nav Link States ═══════════════ */
+    nav#toc a.pending-link {
+      color: var(--muted);
+    }
+    nav#toc a.mastered-link {
+      color: var(--success-text);
+    }
+    nav#toc .nav-status {
+      font-size: 12px;
+      margin-left: 2px;
+    }
+
+    /* ═══════════════ Back to Top Button ═══════════════ */
+    .back-to-top {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 40px;
+      height: 40px;
+      background: var(--primary);
+      color: #faf9f5;
+      border: none;
+      border-radius: var(--radius-lg);
+      font-size: 20px;
+      cursor: pointer;
+      opacity: 0.85;
+      transition: opacity 0.2s, box-shadow 0.2s;
+      box-shadow: 0px 0px 0px 1px rgba(201,100,66,0.3);
+    }
+    .back-to-top:hover {
+      opacity: 1;
+      box-shadow: 0px 0px 0px 2px rgba(201,100,66,0.4);
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════ NAVIGATION ═══════════════ -->
+<nav id="toc">
+  <div class="nav-section">
+    <h3>📖 {学科名}</h3>
+    <ol>
+      <li><a href="#knowledge-map">知识地图</a></li>
+      <li><a href="#learning-path">建议学习路径</a></li>
+    </ol>
+  </div>
+
+  <div class="nav-section">
+    <h3>📚 概念笔记</h3>
+    <div class="progress-bar"><div class="fill" style="width:0%"></div></div>
+    <p style="font-size:11px;color:var(--muted);margin-bottom:8px">进度：<span id="progress-text">0/N</span></p>
+    <ol>
+      <!-- Phase 1 骨架：全部标为 pending；Phase 2 每完成一个，class 改为 mastered-link，图标换 ✓ -->
+      <li><a href="#concept-概念A" class="pending-link">概念A <span class="nav-status">⏳</span> <span class="exam-weight">⭐⭐⭐⭐⭐</span></a></li>
+      <li><a href="#concept-概念B" class="pending-link">概念B <span class="nav-status">⏳</span> <span class="exam-weight">⭐⭐⭐</span></a></li>
+      <!-- ... -->
+    </ol>
+  </div>
+
+  <div class="nav-section">
+    <h3>📝 其他</h3>
+    <ol>
+      <li><a href="#misconceptions">误解清单</a></li>
+      <li><a href="#review-path">复习路径</a></li>
+    </ol>
+  </div>
+</nav>
+
+<!-- ═══════════════ MAIN CONTENT ═══════════════ -->
+<main>
+
+<!-- ── Title ── -->
+<h1>{学科名} — 学习笔记</h1>
+<div class="metadata">
+  <span>📅 生成日期：{YYYY年M月D日}</span>
+  <span>📖 教材：{教材名}</span>
+  <span>📊 状态：{学习中 / 已完成}</span>
+</div>
+
+<!-- ── Knowledge Map ── -->
+<section id="knowledge-map">
+  <h2>🗺️ 知识地图</h2>
+
+  <h3>学习资料</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>类型</th><th>名称</th><th>说明</th></tr>
+      <tr><td>教材</td><td>...</td><td>...</td></tr>
+      <tr><td>重点</td><td>...</td><td>...</td></tr>
+      <tr><td>试卷</td><td>...</td><td>...</td></tr>
+    </table>
+  </div>
+
+  <h3>知识体系总览</h3>
+  <pre style="background:var(--definition-bg); padding: 12px; border-radius: 6px; font-size: 13px; line-height: 1.6;">
+{ASCII 树状图}
+  </pre>
+
+  <h3>概念生长链</h3>
+  <pre style="background:var(--definition-bg); padding: 12px; border-radius: 6px; font-size: 13px; line-height: 1.6;">
+起点问题：{...}
+    ↓
+概念 A — 为什么必须出现？{...}
+    ↓
+概念 B — 为什么必须出现？{...}
+    ↓
+...
+  </pre>
+
+  <h3>概念依赖详表</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>#</th><th>概念</th><th>前置依赖</th><th>为什么需要它</th><th>自然引出</th><th>考试权重</th></tr>
+      <tr><td>1</td><td>概念A</td><td>无</td><td>...</td><td><a href="#concept-概念B">概念B</a></td><td>⭐⭐⭐⭐⭐</td></tr>
+      <!-- ... -->
+    </table>
+  </div>
+</section>
+
+<!-- ── Learning Path ── -->
+<section id="learning-path">
+  <h2>📋 建议学习路径</h2>
+  <ol>
+    <li><strong>第一轮</strong>：概念A → 概念B → 概念C（基础概念，需牢固掌握）</li>
+    <li><strong>第二轮</strong>：概念D → 概念E → 概念F（中级概念，依赖第一轮）</li>
+    <li><strong>第三轮</strong>：概念G → 概念H（高级概念，综合运用）</li>
+  </ol>
+</section>
+
+<hr class="chapter-sep">
+
+<!-- ── Concept Notes ── -->
+<!--
+  Phase 1 骨架：每个概念用 pending 占位符
+  Phase 2 完成推导后：替换为完整的 8 段内容 + derivation-log
+-->
+<section id="concept-概念A" class="concept-note pending">
+  <h2>{概念名} <span class="concept-status pending">⏳</span></h2>
+  <p class="pending-msg">推导中…完成后内容将自动出现在这里。</p>
+</section>
+
+<!-- 完成推导后的完整格式（替换 pending 占位符）：-->
+<!--
+<section id="concept-概念A" class="concept-note">
+  <h2>{概念名} <span class="concept-status mastered">✓</span></h2>
+
+  <h3>1. 一句话解释</h3>
+  <p class="summary">用最简单的语言解释这个概念是什么，让完全没学过的人也能听懂。</p>
+
+  <h3>2. 为什么需要它？</h3>
+  <p>如果没有这个概念，我们在解决什么问题时会被卡住？</p>
+
+  <h3>3. 它解决了什么问题？</h3>
+  <p>直接回答：这个问题是怎么被这个概念解决的。</p>
+
+  <h3>4. 定义</h3>
+  <div class="definition">
+    <p>形式化定义。如有公式：\[ ... \]</p>
+  </div>
+
+  <h3>5. 最小例子</h3>
+  <div class="example">
+    <p>一个最简单、最能说明问题的例子。</p>
+  </div>
+
+  <h3>6. 反例或易错点</h3>
+  <div class="pitfall">
+    <p>常见的错误理解、容易混淆的相似概念、适用条件的边界。</p>
+  </div>
+
+  <h3>7. 它自然引出什么？</h3>
+  <p>
+    理解这个概念后，自然会产生的新问题：
+    <strong>引出 → <a href="#concept-概念B">概念B</a></strong>
+  </p>
+
+  <h3>8. 相关概念</h3>
+  <ul>
+    <li>前置：<a href="#concept-前置概念">前置概念</a></li>
+    <li>后续：<a href="#concept-后续概念">后续概念</a></li>
+    <li>易混淆：<a href="#concept-相似概念">相似概念</a></li>
+  </ul>
+
+  <details class="derivation-log">
+    <summary>📝 推导过程（点击展开）</summary>
+    <div class="derivation-step">
+      <strong>🔰 你的初始理解：</strong>
+      <p>（用户第一次用自己的话解释的内容）</p>
+    </div>
+    <div class="derivation-step">
+      <strong>❓ AI 追问：</strong>
+      <p>（关键追问）</p>
+    </div>
+    <div class="derivation-step">
+      <strong>✅ 修正后理解：</strong>
+      <p>（追问后的修正版本）</p>
+    </div>
+  </details>
+</section>
+-->
+
+<!-- ... 更多概念 ... -->
+
+<hr class="chapter-sep">
+
+<!-- ── Misconception Table ── -->
+<section id="misconceptions">
+  <h2>⚠️ 误解清单</h2>
+  <div class="table-wrapper">
+    <table>
+      <tr>
+        <th>#</th>
+        <th>概念</th>
+        <th>原始误解</th>
+        <th>为什么不准确</th>
+        <th>修正后理解</th>
+        <th>状态</th>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td><a href="#concept-概念名">概念名</a></td>
+        <td>...</td>
+        <td>...</td>
+        <td>...</td>
+        <td>已修正 / 待复习</td>
+      </tr>
+      <!-- ... -->
+    </table>
+  </div>
+</section>
+
+<!-- ── Review Path ── -->
+<section id="review-path">
+  <h2>🔄 复习路径</h2>
+
+  <h3>已掌握</h3>
+  <ul>
+    <li>概念A、概念B、...</li>
+  </ul>
+
+  <h3>还需复习</h3>
+  <ul>
+    <li><a href="#concept-概念C">概念C</a> — 仍有误解，建议 3 天后回看</li>
+  </ul>
+
+  <h3>下一个自然问题</h3>
+  <p class="summary">{掌握了当前内容后，自然产生的下一个想探索的问题}</p>
+</section>
+
+</main>
+
+<!-- Back to Top -->
+<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">↑</button>
+
+<!-- Highlight current section in nav on scroll -->
+<script>
+  (function() {
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('nav a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 100) current = s.id;
+      });
+      navLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+      });
+    });
+
+    // Update progress bar from concept statuses
+    function updateProgress() {
+      const concepts = document.querySelectorAll('.concept-note');
+      const total = concepts.length;
+      const mastered = document.querySelectorAll('.concept-note .concept-status.mastered').length;
+      const pct = total > 0 ? Math.round(mastered / total * 100) : 0;
+      const bar = document.querySelector('.progress-bar .fill');
+      const text = document.getElementById('progress-text');
+      if (bar) bar.style.width = pct + '%';
+      if (text) text.textContent = mastered + '/' + total;
+    }
+    updateProgress();
+  })();
+</script>
+
+</body>
+</html>
