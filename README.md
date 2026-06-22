@@ -1,7 +1,5 @@
 # 🧠 Learn Everything — 快速掌握任意知识点
 
-> **🚧 发布前请全局替换 `your-org/learn-everything` 为你的 GitHub 仓库路径。**
-
 <p align="center">
   <em>两阶段 AI 学习系统：先画知识地图，再用第一性原理带你逐个概念推导到根。<br>
   你的每一句话都直接变成笔记 —— 对话即 Wiki。</em>
@@ -26,7 +24,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/your-org/learn-everything/releases" title="下载 Demo 视频">
+  <a href="https://github.com/YiZheng0328/learn-everything/releases" title="下载 Demo 视频">
     <img src="https://img.shields.io/badge/%F0%9F%93%B9_Demo_Video-75MB-terracotta?style=for-the-badge" alt="Demo Video" />
   </a>
 </p>
@@ -45,7 +43,7 @@ Demo 视频展示了一个完整的 Full Mode 学习流程：
 </details>
 
 > 💡 **Demo 视频（~75MB）下载方式：**
-> - **[GitHub Releases](https://github.com/your-org/learn-everything/releases)** — 下载最新版本附带的 `learn-everything-demo.mp4`
+> - **[GitHub Releases](https://github.com/YiZheng0328/learn-everything/releases)** — 下载最新版本附带的 `learn-everything-demo.mp4`
 > - **克隆仓库** — `git clone` 后播放 `demo/learn-everything-demo.mp4`
 >
 > 建议下载到本地后用 VLC / mpv / QuickTime 等播放器打开。
@@ -184,16 +182,16 @@ Demo 视频展示了一个完整的 Full Mode 学习流程：
 cd ~/.claude/skills/
 
 # 克隆本仓库
-git clone https://github.com/your-org/learn-everything.git
+git clone https://github.com/YiZheng0328/learn-everything.git
 
 # 或者如果你有自定义 skills 目录
 cd /path/to/your/project/.claude/skills/
-git clone https://github.com/your-org/learn-everything.git
+git clone https://github.com/YiZheng0328/learn-everything.git
 ```
 
 **方法二：直接下载**
 
-从 [Releases](https://github.com/your-org/learn-everything/releases) 下载最新版本，解压到 `.claude/skills/learn-everything/`。
+从 [Releases](https://github.com/YiZheng0328/learn-everything/releases) 下载最新版本，解压到 `.claude/skills/learn-everything/`。
 
 ### 验证安装
 
